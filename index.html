@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인권 탐정단 : 우리가 살아가기 위해 필요한 권리를 찾아라!</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body{font-family:'Noto Sans KR',sans-serif;background:#f8fafc;}
+  .fade-in{animation:fadeIn .35s ease-out forwards;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  textarea::-webkit-scrollbar{width:6px;}
+  textarea::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+  .dot{width:8px;height:8px;border-radius:9999px;background:#e2e8f0;transition:.2s;}
+  .dot.active{background:#4f46e5;transform:scale(1.3);}
+  .dot.done{background:#a5b4fc;}
+  @media print{
+    body *{visibility:hidden;}
+    #reportArea, #reportArea *{visibility:visible;}
+    #reportArea{position:absolute;left:0;top:0;width:100%;padding:24px;}
+    .no-print{display:none!important;}
+  }
+</style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg z-[70] no-print"></div>
+
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
+  <div class="max-w-3xl mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
+      <span class="text-2xl">🕵️</span>
+      <span class="font-bold text-lg tracking-tight">인권 탐정단</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="saveIndicator" class="hidden sm:inline text-[11px] text-slate-400"></span>
+      <div id="progressContainer" class="hidden items-center gap-1.5 text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+        <span id="progressText" class="font-medium text-slate-700">사건 1/4</span>
+        <div class="w-16 bg-slate-200 rounded-full h-2 ml-1">
+          <div id="progressBar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 max-w-3xl w-full mx-auto px-4 py-8">
+
+  <!-- INTRO -->
+  <section id="screen-intro" class="fade-in text-center py-10">
+    <div class="text-6xl mb-4">🕵️</div>
+    <h1 class="text-3xl font-black mb-2">인권 탐정단</h1>
+    <p class="text-lg font-semibold text-indigo-600 mb-6">우리가 살아가기 위해 필요한 새로운 권리를 찾아라!</p>
+    <p class="text-slate-600 leading-relaxed max-w-xl mx-auto mb-6">
+      오늘 우리는 뉴스 속 사건을 살펴보면서 사람들이 인간다운 삶을 살아가기 위해 무엇을 보장받아야 하는지 찾아봅니다.
+    </p>
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 max-w-md mx-auto text-left text-sm text-slate-600 space-y-1 mb-8">
+      <p>뉴스 속 문제를 발견하고</p>
+      <p>→ 필요한 조건을 생각하고</p>
+      <p>→ 법에서 근거를 찾고</p>
+      <p>→ 새로운 권리의 이름을 찾아봅시다.</p>
+    </div>
+    <div id="introResumeBanner" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 max-w-md mx-auto mb-5 text-sm text-indigo-700"></div>
+    <button onclick="startInvestigation()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition">
+      탐정 활동 시작하기 <i class="fa-solid fa-arrow-right ml-1"></i>
+    </button>
+
+    <div class="mt-8 max-w-md mx-auto border-t border-slate-200 pt-5 text-xs text-slate-400">
+      <p class="mb-2">다른 컴퓨터에서 이어서 하고 싶다면, 진행 상황을 파일로 저장했다가 불러올 수 있어요.</p>
+      <div class="flex justify-center gap-2">
+        <button onclick="exportSaveFile()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg flex items-center gap-1">
+          <i class="fa-solid fa-download"></i> 진행 상황 파일로 저장
+        </button>
+        <label class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer">
+          <i class="fa-solid fa-upload"></i> 파일 불러오기
+          <input type="file" accept="application/json" class="hidden" onchange="importSaveFile(this)">
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE FLOW -->
+  <section id="screen-case" class="hidden">
+    <div class="flex items-center gap-2 mb-2">
+      <span id="caseIcon" class="text-3xl"></span>
+      <div>
+        <p id="caseBadge" class="text-xs font-bold text-indigo-600"></p>
+        <h2 id="caseTitle" class="text-xl font-black"></h2>
+      </div>
+    </div>
+    <div id="subStepDots" class="flex gap-1.5 mb-5"></div>
+
+    <div id="caseCard" class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 fade-in min-h-[260px]"></div>
+
+    <div class="flex justify-between items-center mt-6 no-print">
+      <button id="btnPrev" onclick="goPrev()" class="text-slate-500 hover:text-slate-700 font-medium px-4 py-2 flex items-center gap-1">
+        <i class="fa-solid fa-arrow-left"></i> 이전
+      </button>
+      <button onclick="saveProgressManually()" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium px-3 py-2 flex items-center gap-1.5">
+        <i class="fa-solid fa-floppy-disk"></i> 저장
+      </button>
+      <button id="btnNext" onclick="goNext()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md transition">
+        다음 <i class="fa-solid fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- FINAL -->
+  <section id="screen-final" class="hidden fade-in">
+    <div class="text-center mb-6">
+      <div class="text-5xl mb-2">🎯</div>
+      <h2 class="text-2xl font-black">인권 탐정단 최종 미션</h2>
+      <p class="text-slate-500 mt-1">우리는 네 개의 사건을 해결했습니다.</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 mb-6 overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-slate-500 border-b"><th class="py-2">사건</th><th class="py-2">우리가 발견한 권리</th></tr></thead>
+        <tbody id="finalTableBody"></tbody>
+      </table>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 mb-6">
+      <p class="font-bold mb-3">💡 처음부터 이런 권리들이 모두 중요하게 여겨졌을까요?</p>
+      <p class="text-sm text-slate-600 mb-3">다음 문장을 완성하세요.</p>
+      <p class="text-sm mb-1">사회가 변화하면서</p>
+      <input id="finalBlank1" type="text" placeholder="예: 이전에는 없던 새로운" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-2 focus:ring-indigo-400 outline-none">
+      <p class="text-sm mb-1">문제가 등장했고, 이를 해결하기 위해 인권의 영역도</p>
+      <input id="finalBlank2" type="text" placeholder="예: 계속 넓어지고 있다" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+    </div>
+    <div class="flex justify-between items-center no-print">
+      <button onclick="goPrev()" class="text-slate-500 hover:text-slate-700 font-medium px-4 py-2"><i class="fa-solid fa-arrow-left"></i> 이전</button>
+      <button onclick="saveProgressManually()" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium px-3 py-2 flex items-center gap-1.5"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+      <button onclick="goToExit()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md">다음 <i class="fa-solid fa-arrow-right ml-1"></i></button>
+    </div>
+  </section>
+
+  <!-- EXIT TICKET -->
+  <section id="screen-exit" class="hidden fade-in text-center">
+    <div class="text-5xl mb-3">🚪</div>
+    <h2 class="text-2xl font-black mb-1">오늘의 Exit Ticket</h2>
+    <p class="text-indigo-600 font-semibold mb-6">"인권은 왜 계속 확장될까?"</p>
+    <p class="text-sm text-slate-500 mb-3">오늘 활동을 통해 생각한 것을 한 문장으로 작성하세요.</p>
+    <textarea id="exitInput" rows="3" class="w-full max-w-lg mx-auto block border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none mb-6"></textarea>
+    <div class="flex justify-center items-center gap-3 no-print">
+      <button onclick="goPrev()" class="text-slate-500 hover:text-slate-700 font-medium px-4 py-2"><i class="fa-solid fa-arrow-left"></i> 이전</button>
+      <button onclick="saveProgressManually()" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium px-3 py-2 flex items-center gap-1.5"><i class="fa-solid fa-floppy-disk"></i> 저장</button>
+      <button onclick="submitExit()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-md">제출하기</button>
+    </div>
+  </section>
+
+  <!-- COMPLETE / REPORT -->
+  <section id="screen-complete" class="hidden fade-in">
+    <div id="reportArea" class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+      <div class="text-center mb-6">
+        <div class="text-5xl mb-2">🕵️</div>
+        <h2 class="text-2xl font-black">탐정 활동 완료!</h2>
+        <p class="text-slate-500 text-sm mt-2 max-w-md mx-auto leading-relaxed">
+          인권은 이미 완성된 목록이 아닙니다. 사회가 변화하고 새로운 문제가 등장하면서 인간다운 삶을 위해 필요한 권리도 계속 확대될 수 있습니다.
+        </p>
+      </div>
+      <table class="w-full text-sm mb-5">
+        <thead><tr class="text-left text-slate-500 border-b"><th class="py-2">사건</th><th class="py-2">발견한 권리</th></tr></thead>
+        <tbody id="reportTableBody"></tbody>
+      </table>
+      <div class="bg-indigo-50 rounded-xl p-4 text-sm mb-3">
+        <p class="font-semibold text-indigo-700 mb-1">사회 변화와 인권 확장</p>
+        <p id="reportFinalSentence" class="text-slate-700"></p>
+      </div>
+      <div class="bg-slate-50 rounded-xl p-4 text-sm">
+        <p class="font-semibold text-slate-700 mb-1">Exit Ticket — 인권은 왜 계속 확장될까?</p>
+        <p id="reportExitAnswer" class="text-slate-700"></p>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3 mt-6 no-print">
+      <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2">
+        <i class="fa-solid fa-print"></i> PDF/인쇄로 저장
+      </button>
+      <button onclick="exportPNG()" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold px-5 py-2.5 rounded-xl shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-image"></i> 이미지로 저장
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ---------------- 데이터 (뉴스 내용은 원문 그대로 유지) ---------------- */
+const caseData = [
+  {
+    badge:"사건 ①", icon:"🏠", title:"안정적인 집을 구하기 어려운 사람들",
+    news:{
+      title:"\"집을 구했는데도 집을 잃을 수 있다?\"",
+      content:"전세 계약을 맺고 보증금을 맡겼지만, 계약이 끝난 뒤 돈을 돌려받지 못하는 전세사기 피해가 발생하고 있다. 특히 목돈이 부족한 청년들은 보증금을 잃으면 다른 집을 구하기도 어려워 생활 자체가 불안정해질 수 있다. 정부와 국회는 피해자의 주거 안정을 돕기 위한 지원 정책과 법 개정을 추진하고 있다.",
+      source:"전세사기 피해자 지원 관련 최근 보도자료 및 언론 보도를 바탕으로 수업용 재구성"
+    },
+    options:["안정적으로 머물 수 있는 공간","적절한 비용으로 이용할 수 있는 환경","안전한 생활 공간","원하는 직업을 선택할 기회","문화생활에 참여할 기회"],
+    law:{targetName:"대한민국헌법", lawUrl:"https://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603", correctArticle:35, fullRef:"대한민국헌법 제35조 제3항", text:"국가는 주택개발정책등을 통하여 모든 국민이 쾌적한 주거생활을 할 수 있도록 노력하여야 한다.", keywords:"모든 국민 / 쾌적한 주거생활 / 국가"},
+    right:{name:"주거", hint:"집과 관련된 권리입니다.", defPlaceholder:"예: 안정적으로 살 곳을 보장받아 인간다운 생활을 할..."}
+  },
+  {
+    badge:"사건 ②", icon:"🦺", title:"\"조심해서 일하면 되는 것 아닐까?\"",
+    news:{
+      title:"\"일하러 간 곳에서 다치지 않을 권리\"",
+      content:"공사장이나 공장에서는 추락이나 기계 사고 등으로 노동자가 다치는 일이 발생한다. 2026년에도 산업재해로 목숨을 잃는 노동자가 계속 발생하고 있다. 사고를 막기 위해서는 노동자 개인이 조심하는 것뿐만 아니라 안전시설을 마련하고 위험을 미리 예방하는 사회적 노력이 필요하다.",
+      source:"고용노동부 산업재해 관련 발표 및 최근 언론 보도를 바탕으로 수업용 재구성"
+    },
+    options:["위험한 상황에서 보호받을 수 있는 안전장치","사고를 예방할 수 있는 작업 환경","안정적으로 머물 수 있는 공간","문화생활에 참여할 기회","원하는 만큼 자유롭게 일할 시간"],
+    law:{targetName:"대한민국헌법", lawUrl:"https://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603", correctArticle:34, fullRef:"대한민국헌법 제34조 제6항", text:"국가는 재해를 예방하고 그 위험으로부터 국민을 보호하기 위하여 노력하여야 한다.", keywords:"재해 예방 / 위험으로부터 보호 / 국가"},
+    right:{name:"안전", hint:"위험으로부터 보호받는 것과 관련된 권리입니다.", defPlaceholder:"예: 위험한 상황으로부터 보호받아..."}
+  },
+  {
+    badge:"사건 ③", icon:"🌏", title:"\"너무 더운 것도 인권의 문제가 될까?\"",
+    news:{
+      title:"\"42℃의 여름, 그냥 더운 날씨일 뿐일까?\"",
+      content:"2026년 여름에도 우리나라 곳곳에서 강한 폭염이 이어졌다. 기온이 지나치게 높아지면 온열질환자가 발생하고 생명이 위험해질 수 있다. 특히 야외 노동자나 냉방시설을 충분히 이용하기 어려운 사람들은 더 큰 위험에 노출된다. 기후변화로 폭염과 같은 극단적인 기상이 나타나는 문제도 커지고 있다.",
+      source:"2026년 폭염 관련 기상 및 언론 보도를 바탕으로 수업용 재구성"
+    },
+    options:["건강을 해치지 않는 쾌적한 환경","무더위를 피할 수 있는 여건","안정적으로 머물 수 있는 공간","원하는 직업을 선택할 기회","다양한 문화를 접할 기회"],
+    law:{targetName:"대한민국헌법", lawUrl:"https://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603", correctArticle:35, fullRef:"대한민국헌법 제35조 제1항", text:"모든 국민은 건강하고 쾌적한 환경에서 생활할 권리를 가지며, 국가와 국민은 환경보전을 위하여 노력하여야 한다.", keywords:"건강하고 쾌적한 환경 / 생활할 권리"},
+    right:{name:"환경", hint:"건강하고 쾌적한 환경과 관련된 권리입니다.", defPlaceholder:"예: 건강하고 쾌적한 환경에서 생활할..."}
+  },
+  {
+    badge:"사건 ④", icon:"🎬", title:"\"같은 영화를 보러 갔는데 왜 누구는 보기 어려울까?\"",
+    news:{
+      title:"\"모두가 문화생활을 즐길 수 있을까?\"",
+      content:"영화·공연·온라인 콘텐츠는 많은 사람이 즐기는 문화생활이다. 하지만 장애가 있는 사람은 자막이나 음성 설명, 접근 가능한 시설이 부족하면 문화생활에 참여하기 어려울 수 있다. 최근에는 장애인이 영화와 공연 등을 편리하게 이용할 수 있도록 '배리어프리' 환경을 확대하려는 노력이 이어지고 있다.",
+      source:"장애인 문화·미디어 접근권 및 배리어프리 관련 최근 보도를 바탕으로 수업용 재구성"
+    },
+    options:["문화생활에 자유롭게 참여할 기회","차별 없이 콘텐츠를 이용할 수 있는 환경","안전한 생활 공간","안정적으로 머물 수 있는 공간","위험으로부터 보호받는 것"],
+    law:{targetName:"문화기본법", lawUrl:"https://www.law.go.kr/LSW/lsEfInfoP.do?lsiSeq=148942", correctArticle:4, fullRef:"문화기본법 제4조(국민의 권리)", text:"모든 국민은 성별, 종교, 인종, 세대, 지역, 사회적 신분, 경제적 지위나 신체적 조건 등에 관계없이 문화 표현과 활동에서 차별을 받지 아니하고 자유롭게 문화를 창조하고 문화 활동에 참여하며 문화를 향유할 권리를 가진다.", keywords:"차별받지 않을 권리 / 문화 활동에 참여 / 문화를 향유"},
+    right:{name:"문화", hint:"문화생활에 참여하고 문화를 향유하는 것과 관련된 권리입니다.", defPlaceholder:"예: 차별 없이 문화생활에 참여하고 향유할..."}
+  }
+];
+
+const SUBSTEPS = 6; // 0:뉴스 1:문제발견 2:조건선택 3:법률미션 4:권리발견 5:정의
+
+/* ---------------- 상태 ---------------- */
+let state = {
+  caseIdx:0, subStep:0,
+  cases: caseData.map(()=>({problem:"",selected:[],reason:"",articleInput:"",articleOk:false,attempts:0,rightInput:"",rightOk:false,definition:""})),
+  finalBlank1:"", finalBlank2:"", exitAnswer:"",
+  phase:"intro" // intro | case | final | exit | complete
+};
+
+function saveState(){
+  try{
+    localStorage.setItem('hr_detective_state', JSON.stringify(state));
+    const el = document.getElementById('saveIndicator');
+    if(el){
+      const t = new Date();
+      el.innerText = `자동 저장됨 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+    }
+  }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem('hr_detective_state');
+    if(raw){ const parsed = JSON.parse(raw); if(parsed && parsed.cases && parsed.cases.length===4){ state = parsed; } }
+  }catch(e){}
+}
+function clearSavedState(){
+  try{ localStorage.removeItem('hr_detective_state'); }catch(e){}
+}
+
+let toastTimer = null;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.innerText = msg;
+  el.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.classList.add('hidden'); }, 2200);
+}
+
+function saveProgressManually(){
+  saveState();
+  exportSaveFile();
+  showToast('💾 진행 상황이 파일로 저장되었어요.');
+}
+
+/* ---------------- 파일로 내보내기 / 불러오기 (다른 컴퓨터에서 이어하기용) ---------------- */
+function exportSaveFile(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const link = document.createElement('a');
+  link.download = '인권탐정단_진행상황.json';
+  link.href = URL.createObjectURL(blob);
+  link.click();
+}
+function importSaveFile(fileInput){
+  const file = fileInput.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const parsed = JSON.parse(e.target.result);
+      if(!parsed || !parsed.cases || parsed.cases.length!==4){ alert('올바른 저장 파일이 아니에요.'); return; }
+      state = parsed;
+      saveState();
+      if(state.phase==='intro'){ showScreen('screen-intro'); }
+      else if(state.phase==='case'){ showScreen('screen-case'); renderCaseScreen(); }
+      else if(state.phase==='final'){ showScreen('screen-final'); renderFinalScreen(); }
+      else if(state.phase==='exit'){ showScreen('screen-exit'); document.getElementById('exitInput').value=state.exitAnswer; }
+      else if(state.phase==='complete'){ showScreen('screen-complete'); renderCompleteScreen(); }
+    }catch(err){ alert('파일을 불러오지 못했어요. 파일을 확인해 주세요.'); }
+  };
+  reader.readAsText(file);
+  fileInput.value = '';
+}
+
+/* ---------------- 화면 전환 ---------------- */
+function showScreen(id){
+  ['screen-intro','screen-case','screen-final','screen-exit','screen-complete'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden', s!==id);
+  });
+  document.getElementById('progressContainer').classList.toggle('hidden', id!=='screen-case');
+  document.getElementById('progressContainer').classList.toggle('flex', id==='screen-case');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goHome(){
+  if(state.phase!=='intro' && !confirm('처음 화면으로 돌아갈까요? 지금까지 입력한 내용은 저장되어 있어 나중에 이어서 할 수 있어요.')) return;
+  showScreen('screen-intro');
+  renderIntroResumeBanner();
+}
+
+function renderIntroResumeBanner(){
+  const banner = document.getElementById('introResumeBanner');
+  const hasProgress = state.phase !== 'intro';
+  if(!hasProgress){ banner.classList.add('hidden'); return; }
+  const phaseLabel = state.phase==='case' ? `사건 ${state.caseIdx+1}/4 진행 중` :
+                      state.phase==='final' ? '최종 미션 단계' :
+                      state.phase==='exit' ? 'Exit Ticket 단계' :
+                      state.phase==='complete' ? '활동 완료' : '';
+  banner.innerHTML = `
+    <p class="font-semibold mb-2">📌 이어서 할 수 있는 진행 상황이 있어요 (${phaseLabel})</p>
+    <button onclick="resumeInvestigation()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg mr-2">이어서 하기</button>
+    <button onclick="restartInvestigation()" class="text-xs text-indigo-500 hover:text-indigo-700 underline">처음부터 새로 시작</button>
+  `;
+  banner.classList.remove('hidden');
+}
+
+function resumeInvestigation(){
+  if(state.phase==='case'){ showScreen('screen-case'); renderCaseScreen(); }
+  else if(state.phase==='final'){ showScreen('screen-final'); renderFinalScreen(); }
+  else if(state.phase==='exit'){ showScreen('screen-exit'); document.getElementById('exitInput').value=state.exitAnswer; document.getElementById('exitInput').oninput=e=>{state.exitAnswer=e.target.value; saveState();}; }
+  else if(state.phase==='complete'){ showScreen('screen-complete'); renderCompleteScreen(); }
+}
+
+function restartInvestigation(){
+  if(!confirm('지금까지 입력한 내용이 모두 사라져요. 처음부터 새로 시작할까요?')) return;
+  clearSavedState();
+  state = {
+    caseIdx:0, subStep:0,
+    cases: caseData.map(()=>({problem:"",selected:[],reason:"",articleInput:"",articleOk:false,attempts:0,rightInput:"",rightOk:false,definition:""})),
+    finalBlank1:"", finalBlank2:"", exitAnswer:"",
+    phase:"case"
+  };
+  showScreen('screen-case'); renderCaseScreen(); saveState();
+}
+
+function startInvestigation(){
+  if(state.phase!=='intro' && !confirm('이미 진행 중인 활동이 있어요. 새로 시작하면 기존 내용이 사라져요. 새로 시작할까요?')) return;
+  state.phase='case'; state.caseIdx=0; state.subStep=0;
+  state.cases = caseData.map(()=>({problem:"",selected:[],reason:"",articleInput:"",articleOk:false,attempts:0,rightInput:"",rightOk:false,definition:""}));
+  state.finalBlank1=""; state.finalBlank2=""; state.exitAnswer="";
+  showScreen('screen-case'); renderCaseScreen(); saveState();
+}
+
+/* ---------------- 케이스 화면 렌더 ---------------- */
+function renderCaseScreen(){
+  const data = caseData[state.caseIdx];
+  const ans = state.cases[state.caseIdx];
+
+  document.getElementById('progressText').innerText = `사건 ${state.caseIdx+1}/4`;
+  document.getElementById('progressBar').style.width = `${((state.caseIdx)/4*100)+(state.subStep/SUBSTEPS)*25}%`;
+  document.getElementById('caseBadge').innerText = data.badge;
+  document.getElementById('caseTitle').innerText = data.title;
+  document.getElementById('caseIcon').innerText = data.icon;
+
+  const dotsWrap = document.getElementById('subStepDots');
+  dotsWrap.innerHTML = '';
+  for(let i=0;i<SUBSTEPS;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===state.subStep?' active':(i<state.subStep?' done':''));
+    dotsWrap.appendChild(d);
+  }
+
+  const card = document.getElementById('caseCard');
+  card.innerHTML = '';
+  card.classList.remove('fade-in'); void card.offsetWidth; card.classList.add('fade-in');
+
+  if(state.subStep===0){
+    card.innerHTML = `
+      <p class="text-xs text-slate-400 font-semibold mb-2"><i class="fa-solid fa-newspaper mr-1"></i> 뉴스 카드</p>
+      <h3 class="text-lg font-bold mb-3">${data.news.title}</h3>
+      <p class="text-slate-700 leading-relaxed text-sm mb-4">${data.news.content}</p>
+      <p class="text-xs text-slate-400">출처: ${data.news.source}</p>
+    `;
+  } else if(state.subStep===1){
+    card.innerHTML = `
+      <p class="font-bold mb-3">🔍 사건을 분석해 보자</p>
+      <p class="text-sm text-slate-600 mb-3">이 사건에서 가장 심각한 문제는 무엇이라고 생각하나요?</p>
+      <textarea id="inputProblem" rows="4" placeholder="뉴스 속 사람들은 어떤 어려움을 겪고 있나요?" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">${ans.problem}</textarea>
+    `;
+    document.getElementById('inputProblem').addEventListener('input', e=>{ ans.problem = e.target.value; saveState(); });
+  } else if(state.subStep===2){
+    card.innerHTML = `
+      <p class="font-bold mb-3">💭 인간다운 삶을 위해 무엇이 보장되어야 할까요?</p>
+      <p class="text-xs text-slate-500 mb-3">2~3개를 선택하세요.</p>
+      <div id="optionsBox" class="space-y-2 mb-4"></div>
+      <p class="text-sm font-semibold mb-2">왜 이것이 중요하다고 생각했나요?</p>
+      <textarea id="inputReason" rows="2" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">${ans.reason}</textarea>
+    `;
+    const box = document.getElementById('optionsBox');
+    data.options.forEach((opt,i)=>{
+      const checked = ans.selected.includes(i);
+      const row = document.createElement('div');
+      row.className = `flex items-center p-3 rounded-xl border cursor-pointer text-sm transition ${checked?'bg-indigo-50 border-indigo-300 font-medium':'bg-white border-slate-200 hover:bg-indigo-50/40'}`;
+      row.innerHTML = `
+        <span class="w-5 h-5 rounded-md border-2 mr-2.5 flex items-center justify-center shrink-0 ${checked?'bg-indigo-600 border-indigo-600':'bg-white border-slate-300'}">
+          ${checked ? '<i class="fa-solid fa-check text-white text-[11px]"></i>' : ''}
+        </span>
+        <span>${opt}</span>
+      `;
+      row.addEventListener('click', ()=>{
+        const pos = ans.selected.indexOf(i);
+        if(pos>-1) ans.selected.splice(pos,1); else ans.selected.push(i);
+        saveState(); renderCaseScreen();
+      });
+      box.appendChild(row);
+    });
+    document.getElementById('inputReason').addEventListener('input', e=>{ ans.reason = e.target.value; saveState(); });
+  } else if(state.subStep===3){
+    card.innerHTML = `
+      <p class="font-bold mb-2">🔎 법률 탐정 미션</p>
+      <p class="text-sm text-slate-600 mb-4">우리가 발견한 문제와 관련된 내용을 대한민국의 법에서는 어떻게 보장하고 있을까요?</p>
+      <ol class="text-sm text-slate-600 list-decimal list-inside space-y-1 mb-4">
+        <li>아래 버튼을 눌러 <b>${data.law.targetName}</b> 조문 화면을 여세요.</li>
+        <li>지금까지 발견한 문제와 관련된 조항을 찾아 읽어보세요. (Ctrl+F로 키워드를 검색해도 좋아요)</li>
+        <li>몇 조인지 입력하세요.</li>
+      </ol>
+      <a href="${data.law.lawUrl}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg mb-5">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i> ${data.law.targetName} 조문 바로가기
+      </a>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-sm">제</span>
+        <input id="inputArticle" type="text" inputmode="numeric" value="${ans.articleInput}" class="w-20 border border-slate-300 rounded-lg px-2 py-2 text-center text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+        <span class="text-sm">조</span>
+        <button onclick="checkArticle()" class="ml-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg">조항 확인하기</button>
+      </div>
+      <div id="lawHintBox" class="hidden bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl p-3 mb-3"></div>
+      <div id="lawResultBox" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 mt-2">
+        <p class="text-sm font-bold text-indigo-700 mb-2">🎉 법률 탐정 성공!</p>
+        <p class="text-xs font-semibold text-slate-500 mb-1">${data.law.fullRef}</p>
+        <p class="text-sm text-slate-700 italic mb-2">"${data.law.text}"</p>
+        <p class="text-xs text-slate-500">핵심 표현: ${data.law.keywords}</p>
+      </div>
+    `;
+    document.getElementById('inputArticle').addEventListener('input', e=>{ ans.articleInput = e.target.value; saveState(); });
+    if(ans.articleOk) showLawSuccess();
+  } else if(state.subStep===4){
+    card.innerHTML = `
+      <p class="font-bold mb-3">🧩 우리가 발견한 권리의 이름은?</p>
+      <p class="text-sm text-slate-600 mb-4">지금까지 살펴본 뉴스 속 문제 + 법 조항을 바탕으로 이 권리를 무엇이라고 부르면 좋을지 생각해 보세요.</p>
+      <div class="flex items-center gap-2 mb-3">
+        <input id="inputRight" type="text" value="${ans.rightInput}" placeholder="________" class="w-40 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+        <span class="text-sm font-semibold">권</span>
+        <button onclick="checkRightName()" class="ml-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg">확인하기</button>
+      </div>
+      <button onclick="showRightHint()" class="text-xs text-indigo-500 hover:text-indigo-700 underline mb-3">첫 번째 힌트</button>
+      <p id="rightHintText" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3"></p>
+      <div id="rightSuccessBox" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center mt-2">
+        <p class="text-xs text-slate-500 mb-1">정답!</p>
+        <p id="discoveredRightTitle" class="text-2xl font-black text-indigo-700"></p>
+      </div>
+    `;
+    document.getElementById('inputRight').addEventListener('input', e=>{ ans.rightInput = e.target.value; saveState(); });
+    if(ans.rightOk) showRightSuccess();
+  } else if(state.subStep===5){
+    card.innerHTML = `
+      <p class="font-bold mb-3">✍️ 내가 정의하는 ${data.right.name}권</p>
+      <p class="text-sm text-slate-600 mb-4">방금 살펴본 뉴스와 법 조항을 바탕으로 이 권리가 무엇인지 자신의 말로 정의해 보세요.</p>
+      <div class="flex items-start gap-1 flex-wrap text-sm mb-2">
+        <span class="font-semibold whitespace-nowrap">${data.right.name}권이란</span>
+        <textarea id="inputDef" rows="2" placeholder="${data.right.defPlaceholder}" class="flex-1 min-w-[200px] border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 outline-none">${ans.definition}</textarea>
+        <span class="font-semibold whitespace-nowrap">할 권리이다.</span>
+      </div>
+      <p class="text-xs text-slate-400 mt-3">교과서의 정의를 그대로 쓰기보다, 사례에서 발견한 문제와 법 조항을 연결해서 자신의 말로 써보세요.</p>
+    `;
+    document.getElementById('inputDef').addEventListener('input', e=>{ ans.definition = e.target.value; saveState(); });
+  }
+
+  document.getElementById('btnPrev').style.visibility = (state.caseIdx===0 && state.subStep===0) ? 'hidden' : 'visible';
+  const isLast = state.caseIdx===caseData.length-1 && state.subStep===SUBSTEPS-1;
+  document.getElementById('btnNext').innerHTML = isLast ? '최종 미션으로 이동 <i class="fa-solid fa-flag-checkered ml-1.5"></i>' : '다음 <i class="fa-solid fa-arrow-right ml-1.5"></i>';
+}
+
+/* ---------------- 정답 판정 (관대한 매칭) ---------------- */
+function checkArticle(){
+  const data = caseData[state.caseIdx];
+  const ans = state.cases[state.caseIdx];
+  const raw = document.getElementById('inputArticle').value.trim();
+  const match = raw.match(/\d+/);
+  if(!match){ alert('조항 번호를 숫자로 입력해 주세요.'); return; }
+  const entered = parseInt(match[0]);
+  if(entered === data.law.correctArticle){
+    ans.articleOk = true;
+    document.getElementById('lawHintBox').classList.add('hidden');
+    showLawSuccess();
+  } else {
+    ans.attempts++;
+    const hintBox = document.getElementById('lawHintBox');
+    hintBox.classList.remove('hidden');
+    hintBox.innerHTML = ans.attempts>=2
+      ? `힌트: ${data.law.targetName}에서 조문 내용을 검색해 보세요.<br>주요 힌트 키워드: <strong>${data.right.hint}</strong>`
+      : `입력한 제${entered}조는 이번 사건과 직접적인 관련이 적습니다. 관련 법에서 권리와 보호 조항을 찾아보세요.`;
+  }
+  saveState();
+}
+function showLawSuccess(){ document.getElementById('lawResultBox').classList.remove('hidden'); }
+
+function normalizeRight(s){ return s.trim().replace(/\s/g,'').replace(/권$/,''); }
+function checkRightName(){
+  const data = caseData[state.caseIdx];
+  const ans = state.cases[state.caseIdx];
+  const entered = document.getElementById('inputRight').value;
+  if(!entered.trim()){ alert('권리 이름을 입력해 주세요.'); return; }
+  if(normalizeRight(entered) === data.right.name){
+    ans.rightOk = true;
+    document.getElementById('rightHintText').classList.add('hidden');
+    showRightSuccess();
+  } else {
+    alert('아직 정확한 권리 이름이 아닙니다. 다시 한번 생각해 보세요!');
+  }
+  saveState();
+}
+function showRightHint(){
+  const box = document.getElementById('rightHintText');
+  box.innerText = `💡 힌트: ${caseData[state.caseIdx].right.hint}`;
+  box.classList.remove('hidden');
+}
+function showRightSuccess(){
+  const data = caseData[state.caseIdx];
+  document.getElementById('discoveredRightTitle').innerText = `${data.right.name}권`;
+  document.getElementById('rightSuccessBox').classList.remove('hidden');
+}
+
+/* ---------------- 유효성 검사 ---------------- */
+function isSubStepValid(){
+  const ans = state.cases[state.caseIdx];
+  switch(state.subStep){
+    case 0: return true;
+    case 1: return ans.problem.trim().length>=2;
+    case 2: return ans.selected.length>=2 && ans.reason.trim().length>=2;
+    case 3: return ans.articleOk;
+    case 4: return ans.rightOk;
+    case 5: return ans.definition.trim().length>=2;
+    default: return true;
+  }
+}
+
+/* ---------------- 네비게이션 ---------------- */
+function goNext(){
+  if(!isSubStepValid()){ alert('다음으로 넘어가기 전에 이 단계를 완료해 주세요.'); return; }
+  if(state.subStep < SUBSTEPS-1){
+    state.subStep++;
+  } else if(state.caseIdx < caseData.length-1){
+    state.caseIdx++; state.subStep=0;
+  } else {
+    goToFinal(); return;
+  }
+  renderCaseScreen(); saveState();
+}
+function goPrev(){
+  if(state.phase==='final'){ state.phase='case'; state.caseIdx=caseData.length-1; state.subStep=SUBSTEPS-1; showScreen('screen-case'); renderCaseScreen(); return; }
+  if(state.phase==='exit'){ state.phase='final'; showScreen('screen-final'); renderFinalScreen(); return; }
+  if(state.subStep>0){ state.subStep--; }
+  else if(state.caseIdx>0){ state.caseIdx--; state.subStep=SUBSTEPS-1; }
+  renderCaseScreen(); saveState();
+}
+
+function goToFinal(){
+  state.phase='final'; showScreen('screen-final'); renderFinalScreen(); saveState();
+}
+function renderFinalScreen(){
+  const tbody = document.getElementById('finalTableBody');
+  tbody.innerHTML = caseData.map((d,i)=>{
+    const ans = state.cases[i];
+    return `<tr class="border-b last:border-0"><td class="py-2">${d.icon} ${d.badge}</td><td class="py-2 font-medium">${ans.rightOk? d.right.name+'권' : '-'}</td></tr>`;
+  }).join('');
+  document.getElementById('finalBlank1').value = state.finalBlank1;
+  document.getElementById('finalBlank2').value = state.finalBlank2;
+  document.getElementById('finalBlank1').oninput = e=>{ state.finalBlank1=e.target.value; saveState(); };
+  document.getElementById('finalBlank2').oninput = e=>{ state.finalBlank2=e.target.value; saveState(); };
+}
+
+function goToExit(){
+  state.phase='exit'; showScreen('screen-exit');
+  document.getElementById('exitInput').value = state.exitAnswer;
+  document.getElementById('exitInput').oninput = e=>{ state.exitAnswer=e.target.value; saveState(); };
+  saveState();
+}
+
+function submitExit(){
+  if(!document.getElementById('exitInput').value.trim()){ alert('한 문장으로 작성해 주세요.'); return; }
+  state.exitAnswer = document.getElementById('exitInput').value;
+  state.phase='complete'; showScreen('screen-complete'); renderCompleteScreen(); saveState();
+}
+
+function renderCompleteScreen(){
+  const tbody = document.getElementById('reportTableBody');
+  tbody.innerHTML = caseData.map((d,i)=>{
+    const ans = state.cases[i];
+    return `<tr class="border-b last:border-0"><td class="py-2">${d.icon} ${d.badge}</td><td class="py-2 font-medium">${ans.rightOk? d.right.name+'권' : '-'}</td></tr>`;
+  }).join('');
+  document.getElementById('reportFinalSentence').innerText =
+    `사회가 변화하면서 ${state.finalBlank1 || '……'} 문제가 등장했고, 이를 해결하기 위해 인권의 영역도 ${state.finalBlank2 || '……'}`;
+  document.getElementById('reportExitAnswer').innerText = state.exitAnswer;
+}
+
+/* ---------------- 저장 기능 ---------------- */
+function exportPNG(){
+  const target = document.getElementById('reportArea');
+  html2canvas(target, {backgroundColor:'#ffffff', scale:2}).then(canvas=>{
+    const link = document.createElement('a');
+    link.download = '인권탐정단_활동결과.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+/* ---------------- 초기화 ---------------- */
+function init(){
+  loadState();
+  if(state.phase==='intro'){ showScreen('screen-intro'); }
+  else if(state.phase==='case'){ showScreen('screen-case'); renderCaseScreen(); }
+  else if(state.phase==='final'){ showScreen('screen-final'); renderFinalScreen(); }
+  else if(state.phase==='exit'){ showScreen('screen-exit'); document.getElementById('exitInput').value=state.exitAnswer; document.getElementById('exitInput').oninput=e=>{state.exitAnswer=e.target.value; saveState();}; }
+  else if(state.phase==='complete'){ showScreen('screen-complete'); renderCompleteScreen(); }
+}
+init();
+</script>
+</body>
+</html>
