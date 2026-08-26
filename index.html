@@ -166,6 +166,7 @@
         <thead><tr class="text-left text-slate-500 border-b"><th class="py-2">사건</th><th class="py-2">발견한 권리</th></tr></thead>
         <tbody id="reportTableBody"></tbody>
       </table>
+      <div id="reportDefinitions" class="space-y-3 mb-5"></div>
       <div class="bg-indigo-50 rounded-xl p-4 text-sm mb-3">
         <p class="font-semibold text-indigo-700 mb-1">사회 변화와 인권 확장</p>
         <p id="reportFinalSentence" class="text-slate-700"></p>
@@ -188,14 +189,14 @@
 </main>
 
 <script>
-/* ---------------- 데이터 (뉴스 내용은 원문 그대로 유지) ---------------- */
+/* ---------------- 데이터 (뉴스는 실제 보도를 바탕으로 재구성) ---------------- */
 const caseData = [
   {
     badge:"사건 ①", icon:"🏠", title:"안정적인 집을 구하기 어려운 사람들",
     news:{
-      title:"\"집을 구했는데도 집을 잃을 수 있다?\"",
-      content:"전세 계약을 맺고 보증금을 맡겼지만, 계약이 끝난 뒤 돈을 돌려받지 못하는 전세사기 피해가 발생하고 있다. 특히 목돈이 부족한 청년들은 보증금을 잃으면 다른 집을 구하기도 어려워 생활 자체가 불안정해질 수 있다. 정부와 국회는 피해자의 주거 안정을 돕기 위한 지원 정책과 법 개정을 추진하고 있다.",
-      source:"전세사기 피해자 지원 관련 최근 보도자료 및 언론 보도를 바탕으로 수업용 재구성"
+      title:"\"전세사기 피해자 4만 명, 집은 언제 돌아올까?\"",
+      content:"국토교통부에 따르면 전세사기 특별법이 시행된 뒤 피해자로 인정받은 사람이 약 4만 명에 이르고, 7만 2000여 건의 지원이 이루어졌다. 정부는 피해 주택을 사들이는 방식으로 지원 속도를 내고 있으며, 이미 1만 호 넘게 매입했다. 그럼에도 계약이 끝난 뒤 보증금을 돌려받지 못해 살던 집을 떠나야 하는 사람들은 여전히 있고, 특히 목돈이 부족한 청년일수록 새로운 집을 구하기가 더 어렵다. 정부는 오는 11월부터 피해자에게 최소한의 보증금을 먼저 보장하고 나중에 정산해 주는 제도도 새로 시행할 계획이다.",
+      source:"뉴스1(2026.8.19) 보도를 바탕으로 수업용 재구성"
     },
     options:["안정적으로 머물 수 있는 공간","적절한 비용으로 이용할 수 있는 환경","안전한 생활 공간","원하는 직업을 선택할 기회","문화생활에 참여할 기회"],
     law:{targetName:"대한민국헌법", lawUrl:"https://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603", correctArticle:35, fullRef:"대한민국헌법 제35조 제3항", text:"국가는 주택개발정책등을 통하여 모든 국민이 쾌적한 주거생활을 할 수 있도록 노력하여야 한다.", keywords:"모든 국민 / 쾌적한 주거생활 / 국가"},
@@ -204,9 +205,9 @@ const caseData = [
   {
     badge:"사건 ②", icon:"🦺", title:"\"조심해서 일하면 되는 것 아닐까?\"",
     news:{
-      title:"\"일하러 간 곳에서 다치지 않을 권리\"",
-      content:"공사장이나 공장에서는 추락이나 기계 사고 등으로 노동자가 다치는 일이 발생한다. 2026년에도 산업재해로 목숨을 잃는 노동자가 계속 발생하고 있다. 사고를 막기 위해서는 노동자 개인이 조심하는 것뿐만 아니라 안전시설을 마련하고 위험을 미리 예방하는 사회적 노력이 필요하다.",
-      source:"고용노동부 산업재해 관련 발표 및 최근 언론 보도를 바탕으로 수업용 재구성"
+      title:"\"지게차와 철근 사이에서 벌어진 사고\"",
+      content:"경기 광주와 파주의 작업 현장에서 노동자가 잇따라 사고를 당해 1명이 숨지고 1명이 심정지 상태로 병원에 옮겨졌다. 광주의 한 물류센터에서는 지게차를 몰던 40대 노동자가 지게차와 구조물 사이에 목이 끼이는 사고를 당해 심정지 상태로 이송됐다. 같은 날 파주의 한 상가 공사장에서는 철근을 옮기던 70대 노동자가 철근에 깔려 크게 다쳤고, 결국 숨을 거뒀다. 경찰은 사고 당시 안전수칙이 제대로 지켜졌는지 조사하고 있다. 이처럼 공사장과 물류센터 같은 일터에서는 크고 작은 사고가 끊이지 않고 있다.",
+      source:"경기신문(2026.8.23) 보도를 바탕으로 수업용 재구성"
     },
     options:["위험한 상황에서 보호받을 수 있는 안전장치","사고를 예방할 수 있는 작업 환경","안정적으로 머물 수 있는 공간","문화생활에 참여할 기회","원하는 만큼 자유롭게 일할 시간"],
     law:{targetName:"대한민국헌법", lawUrl:"https://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603", correctArticle:34, fullRef:"대한민국헌법 제34조 제6항", text:"국가는 재해를 예방하고 그 위험으로부터 국민을 보호하기 위하여 노력하여야 한다.", keywords:"재해 예방 / 위험으로부터 보호 / 국가"},
@@ -215,9 +216,9 @@ const caseData = [
   {
     badge:"사건 ③", icon:"🌏", title:"\"너무 더운 것도 인권의 문제가 될까?\"",
     news:{
-      title:"\"42℃의 여름, 그냥 더운 날씨일 뿐일까?\"",
-      content:"2026년 여름에도 우리나라 곳곳에서 강한 폭염이 이어졌다. 기온이 지나치게 높아지면 온열질환자가 발생하고 생명이 위험해질 수 있다. 특히 야외 노동자나 냉방시설을 충분히 이용하기 어려운 사람들은 더 큰 위험에 노출된다. 기후변화로 폭염과 같은 극단적인 기상이 나타나는 문제도 커지고 있다.",
-      source:"2026년 폭염 관련 기상 및 언론 보도를 바탕으로 수업용 재구성"
+      title:"\"다시 찾아온 폭염, 응급실엔 또 온열질환자\"",
+      content:"전국적으로 폭염이 다시 기승을 부리면서 온열질환으로 목숨을 잃는 사람이 다시 나오고 있다. 질병관리청에 따르면 하루 동안 전국 응급실을 찾은 온열질환자가 47명에 달했고, 이 중 고령의 남성 한 명이 숨졌다. 올여름 온열질환으로 병원을 찾은 사람은 3600명이 넘고, 이 가운데 33명이 목숨을 잃어 지난해보다 사망자 수가 더 많다. 환자의 상당수는 65세 이상 고령층으로, 무더위에 더 취약한 것으로 나타났다. 기상청은 앞으로도 낮 기온이 36도 안팎까지 오르고 열대야가 이어질 것으로 내다봤다.",
+      source:"세계일보(2026.8.24) 보도를 바탕으로 수업용 재구성"
     },
     options:["건강을 해치지 않는 쾌적한 환경","무더위를 피할 수 있는 여건","안정적으로 머물 수 있는 공간","원하는 직업을 선택할 기회","다양한 문화를 접할 기회"],
     law:{targetName:"대한민국헌법", lawUrl:"https://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603", correctArticle:35, fullRef:"대한민국헌법 제35조 제1항", text:"모든 국민은 건강하고 쾌적한 환경에서 생활할 권리를 가지며, 국가와 국민은 환경보전을 위하여 노력하여야 한다.", keywords:"건강하고 쾌적한 환경 / 생활할 권리"},
@@ -226,9 +227,9 @@ const caseData = [
   {
     badge:"사건 ④", icon:"🎬", title:"\"같은 영화를 보러 갔는데 왜 누구는 보기 어려울까?\"",
     news:{
-      title:"\"모두가 문화생활을 즐길 수 있을까?\"",
-      content:"영화·공연·온라인 콘텐츠는 많은 사람이 즐기는 문화생활이다. 하지만 장애가 있는 사람은 자막이나 음성 설명, 접근 가능한 시설이 부족하면 문화생활에 참여하기 어려울 수 있다. 최근에는 장애인이 영화와 공연 등을 편리하게 이용할 수 있도록 '배리어프리' 환경을 확대하려는 노력이 이어지고 있다.",
-      source:"장애인 문화·미디어 접근권 및 배리어프리 관련 최근 보도를 바탕으로 수업용 재구성"
+      title:"\"자막 없는 영화관, 누군가에게는 다른 세상\"",
+      content:"서울역사박물관이 장애인과 비장애인이 함께 영화를 즐길 수 있도록 '배리어프리영화관'을 하반기에도 계속 운영하기로 했다. 배리어프리 영화는 시각장애인을 위한 음성 설명과 청각장애인을 위한 자막을 더해 만든 영화로, 이런 영화가 따로 필요하다는 것은 그만큼 일반 영화관에서는 자막이나 음성 설명 없이 장애인이 영화를 즐기기 어려웠다는 뜻이기도 하다. 이번 상영에는 휠체어 전용석 8석도 마련되어 있고, 참여자는 예약 없이 무료로 관람할 수 있다. 서울역사박물관은 2015년부터 이 프로그램을 운영하며 문화 소외 계층의 문화생활 참여를 지원하고 있다.",
+      source:"에이블뉴스(2026.8.19) 보도를 바탕으로 수업용 재구성"
     },
     options:["문화생활에 자유롭게 참여할 기회","차별 없이 콘텐츠를 이용할 수 있는 환경","안전한 생활 공간","안정적으로 머물 수 있는 공간","위험으로부터 보호받는 것"],
     law:{targetName:"문화기본법", lawUrl:"https://www.law.go.kr/LSW/lsEfInfoP.do?lsiSeq=148942", correctArticle:4, fullRef:"문화기본법 제4조(국민의 권리)", text:"모든 국민은 성별, 종교, 인종, 세대, 지역, 사회적 신분, 경제적 지위나 신체적 조건 등에 관계없이 문화 표현과 활동에서 차별을 받지 아니하고 자유롭게 문화를 창조하고 문화 활동에 참여하며 문화를 향유할 권리를 가진다.", keywords:"차별받지 않을 권리 / 문화 활동에 참여 / 문화를 향유"},
@@ -610,12 +611,32 @@ function submitExit(){
   state.phase='complete'; showScreen('screen-complete'); renderCompleteScreen(); saveState();
 }
 
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.innerText = str;
+  return div.innerHTML;
+}
+
 function renderCompleteScreen(){
   const tbody = document.getElementById('reportTableBody');
   tbody.innerHTML = caseData.map((d,i)=>{
     const ans = state.cases[i];
     return `<tr class="border-b last:border-0"><td class="py-2">${d.icon} ${d.badge}</td><td class="py-2 font-medium">${ans.rightOk? d.right.name+'권' : '-'}</td></tr>`;
   }).join('');
+
+  const defsBox = document.getElementById('reportDefinitions');
+  defsBox.innerHTML = caseData.map((d,i)=>{
+    const ans = state.cases[i];
+    if(!ans.rightOk) return '';
+    const defText = ans.definition.trim() ? escapeHtml(ans.definition.trim()) : '(작성한 정의 없음)';
+    return `
+      <div class="bg-slate-50 rounded-xl p-4 text-sm">
+        <p class="font-semibold text-slate-700 mb-1">${d.icon} ${d.right.name}권이란...</p>
+        <p class="text-slate-700 leading-relaxed">${d.right.name}권이란 <span class="font-medium">${defText}</span> 할 권리이다.</p>
+      </div>
+    `;
+  }).join('');
+
   document.getElementById('reportFinalSentence').innerText =
     `사회가 변화하면서 ${state.finalBlank1 || '……'} 문제가 등장했고, 이를 해결하기 위해 인권의 영역도 ${state.finalBlank2 || '……'}`;
   document.getElementById('reportExitAnswer').innerText = state.exitAnswer;
